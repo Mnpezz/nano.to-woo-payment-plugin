@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woo Blocks NanoPay Gateway
 Description: Adds NanoPay as a payment method for WooCommerce
-Version: 1.4
+Version: 1.5
 Author: mnpezz
 Plugin URI: http://github.com/mnpezz
 Requires at least: 5.0
@@ -115,6 +115,7 @@ function init_nanopay_gateway() {
         public function generate_nanopay_form($order) {
             $amount = $order->get_total();
             $currency = $order->get_currency();
+            $order_id = $order->get_id(); // Get the order ID
             ?>
             <div id="nanopay-button"></div>
             <script>
@@ -127,7 +128,23 @@ function init_nanopay_gateway() {
                         notify: '<?php echo esc_js($this->notify_email); ?>',
                         success: function(block) {
                             console.log('Payment successful:', block);
-                            window.location.href = '<?php echo esc_js($this->get_return_url($order)); ?>';
+                            // Send AJAX request to update order status
+                            jQuery.post(
+                                '<?php echo admin_url('admin-ajax.php'); ?>',
+                                {
+                                    action: 'nanopay_payment_complete',
+                                    order_id: <?php echo $order_id; ?>,
+                                    nonce: '<?php echo wp_create_nonce('nanopay-payment-complete'); ?>'
+                                },
+                                function(response) {
+                                    if (response.success) {
+                                        window.location.href = '<?php echo esc_js($this->get_return_url($order)); ?>';
+                                    } else {
+                                        console.error('Failed to update order status:', response.data);
+                                        alert('Payment was received, but there was an issue updating your order. Please contact us for assistance.');
+                                    }
+                                }
+                            );
                         },
                         cancel: function() {
                             console.log('Payment cancelled');
@@ -139,6 +156,33 @@ function init_nanopay_gateway() {
             <?php
         }
     }
+}
+
+
+// Add this outside of the class definition
+add_action('wp_ajax_nanopay_payment_complete', 'nanopay_payment_complete');
+add_action('wp_ajax_nopriv_nanopay_payment_complete', 'nanopay_payment_complete');
+
+function nanopay_payment_complete() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'nanopay-payment-complete')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    $order_id = intval($_POST['order_id']);
+    $order = wc_get_order($order_id);
+
+    if (!$order) {
+        wp_send_json_error('Invalid order ID');
+    }
+
+    // Update order status
+    $order->update_status('processing', __('Payment received via NanoPay.', 'woocommerce'));
+
+    // Add order note
+    $order->add_order_note(__('NanoPay payment completed.', 'woocommerce'));
+
+    wp_send_json_success();
 }
 
 // Block support
