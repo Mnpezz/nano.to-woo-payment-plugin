@@ -53,6 +53,9 @@ If you encounter any issues or have questions about the plugin, please create an
 
 ## Changelog
 
+### 1.6
+- Automatic order status updates
+  
 ### 1.5
 - Updated to use NanoPay JavaScript library directly
 - Removed API key requirement
@@ -63,6 +66,22 @@ If you encounter any issues or have questions about the plugin, please create an
 - Initial release of the improved WooCommerce NanoPay Gateway
 - Integrated NanoPay API for secure payment processing
 - Included both Nano address and API key configuration options
+
+### 1.3
+
+- Added email notifications for successful payments.
+
+### 1.2
+
+- Improved integration with NanoPay API.
+
+### 1.1
+
+- Bug fixes and performance improvements.
+
+### 1.0
+
+- Initial release.
 
 
 ## License
