@@ -1,3 +1,5 @@
+# It seems to work. still needs testing. 
+
 # WooCommerce NanoPay Gateway
 
 ## Description
