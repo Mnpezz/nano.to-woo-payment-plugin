@@ -4,7 +4,8 @@ Plugin Name: Woo Blocks NanoPay Gateway
 Description: Adds NanoPay as a payment method for WooCommerce
 Version: 1.6
 Author: mnpezz
-Plugin URI: http://github.com/mnpezz
+Github: https://github.com/Mnpezz/woo-blocks-plugin
+Donations: https://nano.to/mnpezz
 Requires at least: 5.0
 Requires PHP: 7.0
 WC requires at least: 3.0
