@@ -8,10 +8,12 @@ The WooCommerce NanoPay Gateway plugin adds NanoPay as a payment method for WooC
 
 ## Features
 
-- Seamless integration with WooCommerce checkout
-- Easy configuration with Nano address or Nano.to username
+- Easy integration with WooCommerce
+- Support for WooCommerce Blocks (for compatible themes)
+- Configurable payment gateway title and description
+- Custom Nano address or Nano.to username for receiving payments
+- Email notifications for successful payments
 - Automatic order status updates
-- Compatible with the latest versions of WordPress and WooCommerce
 
 ## Requirements
 
