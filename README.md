@@ -1,6 +1,6 @@
-# It seems to work. still needs testing. 
-
 # WooCommerce NanoPay Gateway
+
+**NOTICE: This plugin is currently under active development and testing. Use in production environments is not recommended at this time.**
 
 ## Description
 
@@ -9,8 +9,7 @@ The WooCommerce NanoPay Gateway plugin adds NanoPay as a payment method for WooC
 ## Features
 
 - Seamless integration with WooCommerce checkout
-- Support for WooCommerce Blocks (for block-based checkout)
-- Easy configuration with NanoPay API key and Nano address
+- Easy configuration with Nano address or Nano.to username
 - Automatic order status updates
 - Compatible with the latest versions of WordPress and WooCommerce
 
@@ -39,14 +38,14 @@ Alternatively, you can manually upload the plugin files to your server:
 1. Go to WooCommerce > Settings > Payments.
 2. Click on "NanoPay" to configure the payment method.
 3. Enable the payment method by checking the "Enable NanoPay Payment" box.
-4. Enter your NanoPay API key in the "API Key" field.
-5. Enter your Nano address in the "Nano Address" field.
+4. Enter your Nano address or Nano.to username in the "Nano Address or Username" field.
+5. (Optional) Enter an email address in the "Notification Email" field to receive payment notifications.
 6. Customize the title and description if desired.
 7. Click "Save changes" to apply your settings.
 
 ## Usage
 
-Once configured, NanoPay will appear as a payment option during the WooCommerce checkout process. Customers can select NanoPay to pay for their orders using Nano cryptocurrency.
+Once configured, NanoPay will appear as a payment option during the WooCommerce checkout process. Customers can select NanoPay to pay for their orders using Nano cryptocurrency. They will be redirected to a NanoPay interface to complete their payment.
 
 ## Support
 
@@ -54,11 +53,17 @@ If you encounter any issues or have questions about the plugin, please create an
 
 ## Changelog
 
+### 1.5
+- Updated to use NanoPay JavaScript library directly
+- Removed API key requirement
+- Added notification email option
+- Improved payment flow
+
 ### 1.4
 - Initial release of the improved WooCommerce NanoPay Gateway
-- Added support for WooCommerce Blocks
 - Integrated NanoPay API for secure payment processing
 - Included both Nano address and API key configuration options
+
 
 ## License
 
@@ -67,3 +72,7 @@ This plugin is released under the GPL v2 or later license.
 ## Credits
 
 This plugin was developed by mnpezz and is powered by the NanoPay API.
+
+## Disclaimer
+
+This plugin is in active development. While efforts have been made to ensure its functionality, it may contain bugs or incomplete features. Use in production environments is at your own risk. Always backup your site before installing or updating plugins.
