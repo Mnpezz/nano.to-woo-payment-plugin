@@ -1,15 +1,15 @@
 <?php
-// File: includes/class-wc-nanopay-gateway-blocks-support.php
+// File: includes/class-wc-nanoto-gateway-blocks-support.php
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
-final class WC_NanoPay_Gateway_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Nanoto_Gateway_Blocks_Support extends AbstractPaymentMethodType {
     private $gateway;
-    protected $name = 'nanopay';
+    protected $name = 'nanoto';
 
     public function initialize() {
         $this->settings = get_option("woocommerce_{$this->name}_settings", []);
-        $this->gateway = new WC_NanoPay_Gateway();
+        $this->gateway = new WC_Nanoto_Gateway();
     }
 
     public function is_active() {
@@ -18,7 +18,7 @@ final class WC_NanoPay_Gateway_Blocks_Support extends AbstractPaymentMethodType 
 
     public function get_payment_method_script_handles() {
         wp_register_script(
-            'wc-nanopay-blocks-integration',
+            'wc-nanoto-blocks-integration',
             plugins_url('build/index.js', dirname(__FILE__)),
             [
                 'wc-blocks-registry',
@@ -31,9 +31,9 @@ final class WC_NanoPay_Gateway_Blocks_Support extends AbstractPaymentMethodType 
             true
         );
         if (function_exists('wp_set_script_translations')) {
-            wp_set_script_translations('wc-nanopay-blocks-integration');
+            wp_set_script_translations('wc-nanoto-blocks-integration');
         }
-        return ['wc-nanopay-blocks-integration'];
+        return ['wc-nanoto-blocks-integration'];
     }
 
     public function get_payment_method_data() {
