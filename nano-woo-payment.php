@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Woo Blocks NanoPay Gateway
-Description: Adds NanoPay as a payment method for WooCommerce
-Version: 2.2
+Plugin Name: Nanoto Woo Payment Gateway
+Description: Adds Nanoto as a payment method for WooCommerce
+Version: 2.3
 Author: mnpezz
 Plugin URI: http://github.com/mnpezz
 Requires at least: 5.0
@@ -15,28 +15,28 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-add_filter('woocommerce_payment_gateways', 'add_nanopay_gateway');
-function add_nanopay_gateway($gateways) {
-    $gateways[] = 'WC_NanoPay_Gateway';
+add_filter('woocommerce_payment_gateways', 'add_nanoto_gateway');
+function add_nanoto_gateway($gateways) {
+    $gateways[] = 'WC_Nanoto_Gateway';
     return $gateways;
 }
 
-add_action('plugins_loaded', 'init_nanopay_gateway', 11);
-function init_nanopay_gateway() {
+add_action('plugins_loaded', 'init_nanoto_gateway', 11);
+function init_nanoto_gateway() {
     if (!class_exists('WC_Payment_Gateway')) {
         add_action('admin_notices', function() {
-            echo '<div class="error"><p>WooCommerce is not active. The WooCommerce NanoPay Gateway plugin requires WooCommerce to be active.</p></div>';
+            echo '<div class="error"><p>WooCommerce is not active. The WooCommerce Nanoto Gateway plugin requires WooCommerce to be active.</p></div>';
         });
         return;
     }
 
-    class WC_NanoPay_Gateway extends WC_Payment_Gateway {
+    class WC_Nanoto_Gateway extends WC_Payment_Gateway {
         public function __construct() {
-            $this->id = 'nanopay';
-            $this->icon = plugin_dir_url(__FILE__) . 'assets/nanopay-icon.png';
+            $this->id = 'nanoto';
+            $this->icon = plugin_dir_url(__FILE__) . 'assets/images/nanoto-icon.png';
             $this->has_fields = false;
-            $this->method_title = 'NanoPay';
-            $this->method_description = 'Pay with Nano using NanoPay';
+            $this->method_title = 'Nanoto';
+            $this->method_description = 'Pay with Nano using Nanoto';
 
             $this->supports = array('products');
 
@@ -58,21 +58,21 @@ function init_nanopay_gateway() {
                 'enabled' => array(
                     'title' => 'Enable/Disable',
                     'type' => 'checkbox',
-                    'label' => 'Enable NanoPay Payment',
+                    'label' => 'Enable Nanoto Payment',
                     'default' => 'yes'
                 ),
                 'title' => array(
                     'title' => 'Title',
                     'type' => 'text',
                     'description' => 'This controls the title which the user sees during checkout.',
-                    'default' => 'NanoPay',
+                    'default' => 'Nanoto',
                     'desc_tip' => true,
                 ),
                 'description' => array(
                     'title' => 'Description',
                     'type' => 'textarea',
                     'description' => 'Payment method description that the customer will see on your checkout.',
-                    'default' => 'Pay with Nano using NanoPay',
+                    'default' => 'Pay with Nano using Nanoto',
                 ),
                 'nano_address' => array(
                     'title' => 'Nano Address or Username',
@@ -94,8 +94,8 @@ function init_nanopay_gateway() {
                 return;
             }
 
-            wp_enqueue_script('nanopay', 'https://pay.nano.to/latest.js', array(), null, true);
-            wp_enqueue_style('nanopay-custom-styles', plugin_dir_url(__FILE__) . 'css/nano-woo-payment.css', array(), '1.0.0');
+            wp_enqueue_script('nanoto', 'https://pay.nano.to/latest.js', array(), null, true);
+            wp_enqueue_style('nanoto-custom-styles', plugin_dir_url(__FILE__) . 'css/nano-woo-payment.css', array(), '1.0.0');
         }
 
         public function process_payment($order_id) {
@@ -109,22 +109,22 @@ function init_nanopay_gateway() {
 
         public function receipt_page($order_id) {
             $order = wc_get_order($order_id);
-            echo '<p>' . __('Please complete your payment using NanoPay.', 'woocommerce') . '</p>';
-            $this->generate_nanopay_form($order);
+            echo '<p>' . __('Please complete your payment using Nanoto.', 'woocommerce') . '</p>';
+            $this->generate_nanoto_form($order);
         }
 
-        public function generate_nanopay_form($order) {
+        public function generate_nanoto_form($order) {
             $amount = $order->get_total();
             $currency = $order->get_currency();
             $order_id = $order->get_id();
             ?>
-            <div id="nanopay-button"></div>
+            <div id="nanoto-button"></div>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    if (window.nanoPayInitialized) return; // Prevent multiple initializations
-                    window.nanoPayInitialized = true;
+                    if (window.nanotoInitialized) return; // Prevent multiple initializations
+                    window.nanotoInitialized = true;
                     
-                    NanoPay.open({
+                    Nanoto.open({
                         title: "<?php echo esc_js(get_bloginfo('name')); ?> - Order #<?php echo $order->get_order_number(); ?>",
                         address: '<?php echo esc_js($this->nano_address); ?>',
                         position: 'bottom',
@@ -137,9 +137,9 @@ function init_nanopay_gateway() {
                             jQuery.post(
                                 '<?php echo admin_url('admin-ajax.php'); ?>',
                                 {
-                                    action: 'nanopay_payment_complete',
+                                    action: 'nanoto_payment_complete',
                                     order_id: <?php echo $order_id; ?>,
-                                    nonce: '<?php echo wp_create_nonce('nanopay-payment-complete'); ?>'
+                                    nonce: '<?php echo wp_create_nonce('nanoto-payment-complete'); ?>'
                                 },
                                 function(response) {
                                     if (response.success) {
@@ -166,12 +166,12 @@ function init_nanopay_gateway() {
 
 
 // Add this outside of the class definition
-add_action('wp_ajax_nanopay_payment_complete', 'nanopay_payment_complete');
-add_action('wp_ajax_nopriv_nanopay_payment_complete', 'nanopay_payment_complete');
+add_action('wp_ajax_nanoto_payment_complete', 'nanoto_payment_complete');
+add_action('wp_ajax_nopriv_nanoto_payment_complete', 'nanoto_payment_complete');
 
-function nanopay_payment_complete() {
+function nanoto_payment_complete() {
     // Verify nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'nanopay-payment-complete')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'nanoto-payment-complete')) {
         wp_send_json_error('Invalid nonce');
     }
 
@@ -183,35 +183,35 @@ function nanopay_payment_complete() {
     }
 
     // Update order status
-    $order->update_status('processing', __('Payment received via NanoPay.', 'woocommerce'));
+    $order->update_status('processing', __('Payment received via Nanoto.', 'woocommerce'));
 
     // Add order note
-    $order->add_order_note(__('NanoPay payment completed.', 'woocommerce'));
+    $order->add_order_note(__('Nanoto payment completed.', 'woocommerce'));
 
     wp_send_json_success();
 }
 
 // Block support
-add_action('woocommerce_blocks_loaded', 'nanopay_register_payment_method_type');
+add_action('woocommerce_blocks_loaded', 'nanoto_register_payment_method_type');
 
-function nanopay_register_payment_method_type() {
+function nanoto_register_payment_method_type() {
     if (!class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
         return;
     }
 
-    require_once plugin_dir_path(__FILE__) . 'includes/class-wc-nanopay-gateway-blocks-support.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wc-nanoto-gateway-blocks-support.php';
 
     add_action(
         'woocommerce_blocks_payment_method_type_registration',
         function(Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry) {
-            $payment_method_registry->register(new WC_NanoPay_Gateway_Blocks_Support());
+            $payment_method_registry->register(new WC_Nanoto_Gateway_Blocks_Support());
         }
     );
 }
 
 // Declare compatibility
-add_action('before_woocommerce_init', 'nanopay_cart_checkout_blocks_compatibility');
-function nanopay_cart_checkout_blocks_compatibility() {
+add_action('before_woocommerce_init', 'nanoto_cart_checkout_blocks_compatibility');
+function nanoto_cart_checkout_blocks_compatibility() {
     if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
     }
